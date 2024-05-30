@@ -1,34 +1,52 @@
 import { useForm } from "react-hook-form";
 
 let renderCount = 0;
+
+type FormValues = {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
 const App = () => {
   console.log('component renders')
-  const { register, formState: {errors}, watch } = useForm({
+  const { register, handleSubmit } = useForm<FormValues>({
     mode: 'all',
     defaultValues: {
-      firstName: 'bill',
-      lastName: 'luo'
+      firstName: '',
+      lastName: '',
+      age: 0,
     }
   });
-  // console.log('watch', watch());// watch function trigger re-render of the component
-  const firstName = watch('firstName');
-  console.log('watching just firstName', firstName)
-
   renderCount++;
+
+  // register
+  // register('firstName', { required: true, minLength: 5 });
+  // console.log(register('lastName', { maxLength: 5 }));
+
   return (
-    <form>
+    <form onSubmit={handleSubmit((data) => console.log(data))}>
       <button type='button'>{renderCount}</button>
       <br />
       <br />
       <input type="text" {...register('firstName', {
         required: true,
         minLength: 3
-      })} />
+      })}
+        placeholder="First Name"
+      />
       <br />
       <input type="text" {...register('lastName', {
         required: true,
         minLength: 3
-      })} />
+      })}
+        placeholder="Last Name"
+      />
+      <br />
+      <input type="number" {...register('age', {valueAsNumber: true})}
+      />
+      <br />
+      <button>Submit</button>
     </form>
   )
 }
