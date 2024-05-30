@@ -9,20 +9,10 @@ type FormValues = {
 }
 
 const App = () => {
-  console.log('component renders')
-  const { register, handleSubmit } = useForm<FormValues>({
-    mode: 'all',
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      age: 0,
-    }
-  });
+  const { register, handleSubmit, watch } = useForm<FormValues>();
   renderCount++;
 
-  // register
-  // register('firstName', { required: true, minLength: 5 });
-  // console.log(register('lastName', { maxLength: 5 }));
+  console.log(watch(['firstName', 'lastName']));
 
   return (
     <form onSubmit={handleSubmit((data) => console.log(data))}>
@@ -43,8 +33,7 @@ const App = () => {
         placeholder="Last Name"
       />
       <br />
-      <input type="number" {...register('age', {valueAsNumber: true})}
-      />
+      <input type="number" {...register('age', {valueAsNumber: true})} />
       <br />
       <button>Submit</button>
     </form>
