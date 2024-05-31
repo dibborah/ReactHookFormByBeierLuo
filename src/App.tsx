@@ -1,67 +1,34 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 
 let renderCount = 0;
-
 type FormValues = {
-  // yourDetails: {
-  //   firstName: string;
-  //   lastName: string;
-  // }
   firstName: string;
   lastName: string;
 }
-
-// Note: Unlike form made in Pure react RHF form inputs are uncontrolled by nature
-// We use getValues to do a partial reset
 const App = () => {
-  const { register, handleSubmit, reset,formState, getValues, formState: { isSubmitSuccessful } } = useForm<FormValues>({
-    defaultValues: {
-      // yourDetails: {
-      //   firstName: 'khana',
-      //   lastName: 'khajana',
-      // }
-      firstName: '',
-      lastName: '',
-    }
-  });
+  const { register, handleSubmit, trigger, formState: { errors } } = useForm<FormValues>();
+  const onSubmit = (data: FormValues) => {
+    console.log('data', data);
+  }
+  console.log('errors', errors);
   renderCount++;
-  console.log('isSubmittedSuccessfully', isSubmitSuccessful);
-
-  React.useEffect(() => {
-    if (formState.isSubmitSuccessful) {
-      reset({
-        firstName: 'Rana',
-        lastName: 'Pratap Singh'
-      })
-    }
-  }, [isSubmitSuccessful, reset])
   return (
     <div>
-      <form onSubmit={handleSubmit((data) => console.log(data))}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <button type='button'>{renderCount}</button>
         <br />
-        <input type="text" {...register('firstName')}
+        <input type="text" {...register('firstName', {
+          required: true,
+          minLength: 6,
+        })}
           placeholder="First Name"
         />
         <br />
-        <input type="text" {...register('lastName')}
-          placeholder="Last Name"
-        />
+        <button type="button" onClick={() => {
+          trigger('firstName')
+        }}>trigger</button>
         <br />
-        <button type="button"
-          onClick={() => {
-            reset({
-              ...getValues(),
-              lastName: 'duo + lingo  '
-            }, {
-              // keepDefaultValues: true,
-              // keepValues: true,
-            });
-            // setValue('yourDetails.firstName','Bill' );
-            // setValue('yourDetails.lastName','luo' );
-          }}
-        >Submit</button>
+        <input type="submit" />
       </form>
     </div>
   )
