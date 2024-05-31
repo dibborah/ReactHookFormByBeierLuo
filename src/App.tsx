@@ -24,9 +24,26 @@ const App = () => {
           placeholder="First Name"
         />
         <br />
-        <button type="button" onClick={() => {
-          trigger('firstName')
-        }}>trigger</button>
+        <br />
+        <input type="text" {...register('lastName', {
+          required: true,
+          minLength: 6,
+        })}
+          placeholder="Last Name"
+        />
+        <br />
+        {/* trigger API called in synchronous fc */}
+        {/* <button type="button" onClick={() => {
+          // trigger(['firstName', 'lastName'])
+          trigger()// Not providing any validation will validate the validation schema of the entire form
+        }}>trigger</button> */}
+        {/* trigger API called in Asynchronous fc */}
+        <button type="button"
+          onClick={async () => {
+            const output = await trigger('firstName', {shouldFocus: true})
+            console.log(output);
+          }}
+        >trigger</button>
         <br />
         <input type="submit" />
       </form>
