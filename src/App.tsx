@@ -1,53 +1,51 @@
+import React from "react";
 import { useForm } from "react-hook-form";
 
 let renderCount = 0;
 type FormValues = {
   firstName: string;
-  customError: string;
+  checkbox: boolean;
 }
 
 const App = () => {
   const {
     register,
     handleSubmit,
-    resetField,
-    // formState: { errors, isValid }
-    // formState: { isDirty, dirtyFields }
-    formState: { touchedFields }
+    watch,
+    unregister,
+    formState: { errors }
   } = useForm<FormValues>({
     defaultValues: {
-      firstName: 'bill '
+      firstName: '',
+      checkbox: true,
     },
-    mode: 'onChange',
+    // shouldUnregister: true
   });
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = (data: FormValues) => {
     console.log('data', data);
   };
-  // console.log('isDirty, dirtyFields', isDirty, dirtyFields);
-  console.log('touchedFields', touchedFields);
+  const checkbox = watch('checkbox');
+  // console.log('checkbox', checkbox)
+  React.useEffect(() => {
+    if (!checkbox) {
+      unregister('firstName', { keepError: true });
+    }
+  }, [unregister, checkbox]);
   renderCount++;
-  // checking commit 
+  console.log('errors', errors);
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <button type='button'>{renderCount}</button>
         <br />
-        <input type="text" {...register('firstName', {
-          required: 'this is required',
-          minLength: {
-            value: 5,
-            message: 'Min length of 5 is required'
-          }
-        })}
-          placeholder="First Name"
-        />
-        {/* <p>{errors?.firstName?.message}</p> */}
-        {/* <p>{isValid ? 'Valid' : 'Not Valid'}</p> */}
+        {checkbox && (
+          <input type="text" {...register('firstName', { required: true })}
+            placeholder="First Name"
+          />
+        )}
         <br />
+        <input type="checkbox" {...register('checkbox')} />
         <br />
-        {/* <button type="button" onClick={() => resetField('firstName', { keepError: true })}>Reset Field</button> */}
-        {/* <button type="button" onClick={() => resetField('firstName', { keepDirty: true })}>Reset Field</button> */}
-        <button type="button" onClick={() => resetField('firstName', { keepTouched: true })}>Reset Field</button>
         <input type="submit" />
       </form>
     </div>
