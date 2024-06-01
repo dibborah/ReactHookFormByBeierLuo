@@ -6,45 +6,48 @@ type FormValues = {
   customError: string;
 }
 
-const sleep = (ms: number) => {// This function returns a promise but this is in the function defination
-  // We are not calling the function which returns a promise . Just defining it !!!
-  return new Promise ((resolve) =>  setTimeout(resolve, ms));
-}
-
 const App = () => {
-  const { register, handleSubmit } = useForm<FormValues>();
+  const {
+    register,
+    handleSubmit,
+    resetField,
+    // formState: { errors, isValid }
+    // formState: { isDirty, dirtyFields }
+    formState: { touchedFields }
+  } = useForm<FormValues>({
+    defaultValues: {
+      firstName: 'bill '
+    },
+    mode: 'onChange',
+  });
   const onSubmit = async (data: FormValues) => {
-    await sleep(1000);// In 1sec the result gets resolved
     console.log('data', data);
-    // throw new Error('testing gggg');
   };
-  const onError = () => {
-    console.log('Wrong!!!');
-  }
+  // console.log('isDirty, dirtyFields', isDirty, dirtyFields);
+  console.log('touchedFields', touchedFields);
   renderCount++;
   return (
     <div>
-      {/* <form onSubmit={(e) => 
-        handleSubmit(
-          onSubmit, onError
-        )(e).catch((e) => {
-        console.log('e', e);
-      })
-      }> */}
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <button type='button'>{renderCount}</button>
         <br />
-        {/* <input type="text" {...register('firstName', { disabled: true })} */}
-        <input type="text" {...register('firstName', { required: true })}
+        <input type="text" {...register('firstName', {
+          required: 'this is required',
+          minLength: {
+            value: 5,
+            message: 'Min length of 5 is required'
+          }
+        })}
           placeholder="First Name"
         />
+        {/* <p>{errors?.firstName?.message}</p> */}
+        {/* <p>{isValid ? 'Valid' : 'Not Valid'}</p> */}
         <br />
         <br />
+        {/* <button type="button" onClick={() => resetField('firstName', { keepError: true })}>Reset Field</button> */}
+        {/* <button type="button" onClick={() => resetField('firstName', { keepDirty: true })}>Reset Field</button> */}
+        <button type="button" onClick={() => resetField('firstName', { keepTouched: true })}>Reset Field</button>
         <input type="submit" />
-        <button type="button" onClick={(e) => {
-          handleSubmit(onSubmit, onError)(e)
-        }}
-        >Fake Submit</button>
       </form>
     </div>
   )
