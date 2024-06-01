@@ -36,6 +36,7 @@ const App = () => {
       })
     }
   }, [isSubmitSuccessful, reset])
+  // checking commit 
   return (
     <div>
       <form onSubmit={handleSubmit((data) => console.log(data))}>
