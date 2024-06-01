@@ -16,6 +16,7 @@ const App = () => {
   const onSubmit = async (data: FormValues) => {
     await sleep(1000);// In 1sec the result gets resolved
     console.log('data', data);
+    // throw new Error('testing gggg');
   };
   const onError = () => {
     console.log('Wrong!!!');
@@ -23,7 +24,14 @@ const App = () => {
   renderCount++;
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit, onError)}>
+      {/* <form onSubmit={(e) => 
+        handleSubmit(
+          onSubmit, onError
+        )(e).catch((e) => {
+        console.log('e', e);
+      })
+      }> */}
+      <form>
         <button type='button'>{renderCount}</button>
         <br />
         {/* <input type="text" {...register('firstName', { disabled: true })} */}
@@ -33,6 +41,10 @@ const App = () => {
         <br />
         <br />
         <input type="submit" />
+        <button type="button" onClick={(e) => {
+          handleSubmit(onSubmit, onError)(e)
+        }}
+        >Fake Submit</button>
       </form>
     </div>
   )
