@@ -10,14 +10,20 @@ type FormValues = {
     amount: number;
   }[]
 };
+const getTotal = (payload: FormValues['cart']) => {
+  let amount = 0;
+  for (const item of payload) {
+    amount += (Number.isNaN(item.amount) ? 0 : item.amount);
+  }
+  return amount;
+};
 
 const TotalAmount = ({ control }: { control: Control<FormValues> }) => {
   const cartValues = useWatch({// It is a memoize version of watch() API
     control,
     name: 'cart'
   })
-  console.log(cartValues);
-  return null
+  return getTotal(cartValues)
 }
 
 const App = () => {
@@ -25,7 +31,7 @@ const App = () => {
     register,
     handleSubmit,
     control,
-    watch,
+    // watch,
     formState: { errors }
   } = useForm<FormValues>({
     defaultValues: {
