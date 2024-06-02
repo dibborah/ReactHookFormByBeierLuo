@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useFormState, useWatch } from "react-hook-form";
 import * as React from 'react';
 
 let renderCount = 0;
@@ -22,6 +22,11 @@ const Controller = ({ render, name, register, control, rules }: ControllerValues
   const value = useWatch({ control, name })// using useWatch in controller the default value worked but not the asynchronous setValue
   // This won't fix the asynchronous setValue
   // That need to be fixed inside the <Input/> component
+  const { errors } = useFormState({
+    control,
+    name
+  })
+  console.log('errors from controller', errors);
   return render({
     value,
     onChange: (e: any) => props.onChange({
@@ -73,7 +78,7 @@ const App = () => {
       setValue('lastName', 'ltest');
     }, 1000);
   }, [setValue]);
-  console.log('errors', errors);
+  // console.log('errors', errors);
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
