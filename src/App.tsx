@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
-import { useForm, useWatch, useFieldArray } from "react-hook-form";
+import { useForm, useWatch, useFieldArray, Control } from "react-hook-form";
 
 let renderCount = 0;
 
@@ -11,11 +11,21 @@ type FormValues = {
   }[]
 };
 
+const TotalAmount = ({ control }: { control: Control<FormValues> }) => {
+  const cartValues = useWatch({// It is a memoize version of watch() API
+    control,
+    name: 'cart'
+  })
+  console.log(cartValues);
+  return null
+}
+
 const App = () => {
   const {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors }
   } = useForm<FormValues>({
     defaultValues: {
@@ -33,6 +43,7 @@ const App = () => {
     console.log('data', data);
   };
   // console.log('field errors', errors);
+  // console.log(watch());
   renderCount++;
   return (
     <div>
@@ -68,6 +79,7 @@ const App = () => {
           })
         }}>Prepend</button>
         <br />
+        <TotalAmount control={control} />
         <p>{errors?.cart?.root?.message}</p>
         <input type="submit" />
       </form>
