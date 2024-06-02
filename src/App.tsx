@@ -22,13 +22,17 @@ const App = () => {
       cart: [{ name: '', amount: 0 }]
     }
   });
-  const { fields, append, prepend } = useFieldArray<any>({
+  const { fields, append, prepend, remove } = useFieldArray<any>({
     name: 'cart',
-    control
+    control,
+    rules: {
+      required: 'Please append at least1 item'
+    }
   })
   const onSubmit = (data: FormValues) => {
     console.log('data', data);
   };
+  // console.log('field errors', errors);
   renderCount++;
   return (
     <div>
@@ -39,12 +43,14 @@ const App = () => {
           <section key={field.id}>
             <label>
               <span>Name</span>
-              <input type="text" {...register(`cart.${index}.name`)} />
+              <input type="text" {...register(`cart.${index}.name`, { required: 'This is required' })} />
             </label>
             <label>
               <span>amount</span>
               <input type="number" {...register(`cart.${index}.amount`, { valueAsNumber: true })} />
             </label>
+            <p>{errors?.cart?.[index]?.name?.message}</p>
+            <button type='button' onClick={() => remove(index)}>Delete</button>
           </section>
         ))}
         <br />
@@ -62,6 +68,7 @@ const App = () => {
           })
         }}>Prepend</button>
         <br />
+        <p>{errors?.cart?.root?.message}</p>
         <input type="submit" />
       </form>
     </div>
@@ -69,3 +76,4 @@ const App = () => {
 }
 
 export default App;
+
