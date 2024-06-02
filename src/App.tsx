@@ -1,36 +1,64 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from "react-hook-form";
+import * as React from 'react';
 
 let renderCount = 0;
+
 type FormValues = {
   firstName: string;
-  checkbox: boolean;
+  lastName: string;
+};
+
+type ControllerValues = {
+  render: any;
+  name: string;
+  register: any;
+  control: any;
+  rules: any;
+}
+
+const Controller = ({ render, name, register, control, rules }: ControllerValues) => {
+  const props = register(name, rules);
+  return render({
+    onChange: (e: any) => props.onChange({
+      target: {
+        name,
+        value: e.target.value
+      }
+    }),
+    name: props.name
+  });
+};
+
+const Input = (props: any) => {
+  const [value, setValue] = React.useState(props.value || '');
+  return (
+    <input
+      name={props.name}
+      onChange={(e) => {
+        setValue(e.target.value)
+        props.onChange && props.onChange(e);// Whatever happens in the input react hook form will know of it// This line is doing that
+      }}
+      value={value}
+    />
+  )
 }
 
 const App = () => {
   const {
     register,
     handleSubmit,
-    watch,
-    unregister,
+    control,
     formState: { errors }
   } = useForm<FormValues>({
     defaultValues: {
       firstName: '',
-      checkbox: true,
+      lastName: '',
     },
-    // shouldUnregister: true
   });
   const onSubmit = (data: FormValues) => {
     console.log('data', data);
   };
-  const checkbox = watch('checkbox');
-  // console.log('checkbox', checkbox)
-  React.useEffect(() => {
-    if (!checkbox) {
-      unregister('firstName', { keepError: true });
-    }
-  }, [unregister, checkbox]);
   renderCount++;
   console.log('errors', errors);
   return (
@@ -38,13 +66,24 @@ const App = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <button type='button'>{renderCount}</button>
         <br />
-        {checkbox && (
-          <input type="text" {...register('firstName', { required: true })}
-            placeholder="First Name"
-          />
-        )}
+        <input type="text" {...register('firstName', { required: true })}
+          placeholder="First Name"
+        />
         <br />
-        <input type="checkbox" {...register('checkbox')} />
+
+        <Controller
+          {...{
+            control,
+            name: 'lastName',
+            register,
+            rules: {
+              required: true,
+            },
+            render: (props: any) => <Input {...props} />
+          }}
+        />
+
+        <br />
         <br />
         <input type="submit" />
       </form>
